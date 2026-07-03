@@ -1,0 +1,84 @@
+# ============================================================
+# SafeX - PPE Safety Violation Detection System
+# Configuration File
+# ============================================================
+
+# Model Configuration
+model:
+  # Options: yolov8n.pt, yolov8s.pt, yolov8m.pt, yolov8l.pt, yolov8x.pt
+  # Or path to your fine-tuned PPE model weights
+  weights: "yolov8m.pt"
+  confidence_threshold: 0.45
+  iou_threshold: 0.5
+  device: "auto"  # auto, cpu, cuda, mps
+  img_size: 640
+
+# PPE Detection Classes
+# Map your model's class IDs to PPE categories
+# Update these based on your fine-tuned model's classes
+ppe_classes:
+  helmet:
+    present_class: "helmet"
+    absent_class: "no-helmet"
+    color: [0, 255, 0]  # Green when present
+    violation_color: [0, 0, 255]  # Red when absent
+  vest:
+    present_class: "vest"
+    absent_class: "no-vest"
+    color: [0, 255, 0]
+    violation_color: [0, 0, 255]
+  safety_shoes:
+    present_class: "safety-shoes"
+    absent_class: "no-safety-shoes"
+    color: [0, 255, 0]
+    violation_color: [0, 0, 255]
+
+# Person Detection (for base YOLO models)
+person_detection:
+  class_id: 0  # COCO person class
+  min_confidence: 0.5
+  min_area: 5000  # Minimum bounding box area in pixels
+
+# Video Processing
+video:
+  frame_sample_fps: 2  # Frames per second to analyze (lower = faster, higher = more thorough)
+  batch_size: 8  # Frames to process in parallel
+  max_resolution: 1080  # Resize frames if larger
+  supported_formats: [".mp4", ".avi", ".mov", ".mkv", ".wmv"]
+
+# Violation Rules
+violation_rules:
+  required_ppe: ["helmet", "vest", "safety_shoes"]  # All required PPE items
+  min_violation_duration_sec: 2  # Only flag if violation persists for N seconds
+  cooldown_sec: 30  # Don't re-flag same person within N seconds
+  severity_levels:
+    critical: ["helmet"]  # Missing helmet = critical
+    high: ["vest"]  # Missing vest = high
+    medium: ["safety_shoes"]  # Missing shoes = medium
+
+# Zones (optional - define restricted areas)
+zones:
+  enabled: false
+  areas:
+    - name: "Furnace Area"
+      polygon: [[100, 200], [400, 200], [400, 500], [100, 500]]
+      required_ppe: ["helmet", "vest", "safety_shoes"]
+    - name: "Warehouse"
+      polygon: [[500, 100], [900, 100], [900, 600], [500, 600]]
+      required_ppe: ["helmet", "vest"]
+
+# Output & Reporting
+output:
+  save_annotated_frames: true
+  save_annotated_video: true
+  save_violation_crops: true
+  report_format: "csv"  # csv, json, xlsx
+  output_dir: "./output"
+  violation_snapshots_dir: "./output/violations"
+
+# Streamlit App Settings
+app:
+  title: "SafeX - PPE Violation Detection"
+  page_icon: "🛡️"
+  theme: "dark"
+  max_upload_size_mb: 500

@@ -1,0 +1,105 @@
+# ============================================================
+# SafeX - RTSP Camera & Alerts Configuration
+# This file extends config.yaml with live monitoring settings.
+# ============================================================
+
+# ============================================================
+# CAMERAS - Add your plant RTSP cameras here
+# ============================================================
+# How to get your RTSP URL:
+#   1. Check your NVR/DVR admin panel for stream URLs
+#   2. Common formats:
+#      - Hikvision: rtsp://admin:password@IP:554/Streaming/Channels/101
+#      - Dahua:     rtsp://admin:password@IP:554/cam/realmonitor?channel=1&subtype=0
+#      - Generic:   rtsp://admin:password@IP:554/stream1
+#   3. Test with VLC: Media > Open Network Stream > paste URL
+#
+# url can also be:
+#   - "0"  for USB webcam (device index)
+#   - "/path/to/video.mp4"  to simulate live feed from a file
+
+cameras:
+  - name: "Gate-1"
+    url: "rtsp://admin:password@192.168.1.101:554/stream1"  # <-- UPDATE
+    enabled: true
+    fps_process: 2  # Analyze 2 frames/sec
+    zone: "Main Gate"
+    required_ppe: ["helmet", "vest", "safety_shoes"]
+
+  - name: "Furnace-Area"
+    url: "rtsp://admin:password@192.168.1.102:554/stream1"  # <-- UPDATE
+    enabled: true
+    fps_process: 2
+    zone: "Furnace Area"
+    required_ppe: ["helmet", "vest", "safety_shoes"]
+
+  - name: "Warehouse"
+    url: "rtsp://admin:password@192.168.1.103:554/stream1"  # <-- UPDATE
+    enabled: true
+    fps_process: 1
+    zone: "Warehouse"
+    required_ppe: ["helmet", "vest"]
+
+  - name: "Loading-Dock"
+    url: "rtsp://admin:password@192.168.1.104:554/stream1"  # <-- UPDATE
+    enabled: false  # Set true when ready
+    fps_process: 2
+    zone: "Loading Dock"
+    required_ppe: ["helmet", "vest", "safety_shoes"]
+
+  # === TESTING: Use webcam or local video file ===
+  # - name: "Webcam-Test"
+  #   url: "0"  # 0 = first USB camera
+  #   enabled: true
+  #   fps_process: 2
+  #
+  # - name: "File-Test"
+  #   url: "/path/to/your/footage.mp4"  # Loops the file as if live
+  #   enabled: true
+  #   fps_process: 2
+
+# ============================================================
+# ALERTS - Notification channels for violations
+# ============================================================
+alerts:
+  enabled: true
+  cooldown_seconds: 60  # Don't re-alert same camera+violation type within 60s
+
+  # --- Telegram Bot ---
+  # Setup:
+  #   1. Message @BotFather on Telegram, create a bot, get token
+  #   2. Add bot to your group, get chat_id via https://api.telegram.org/bot<TOKEN>/getUpdates
+  #   3. Paste token and chat_id below (or use environment variables)
+  telegram:
+    enabled: true
+    bot_token: ""  # Or set env: SAFEX_TELEGRAM_BOT_TOKEN
+    chat_id: ""    # Or set env: SAFEX_TELEGRAM_CHAT_ID
+
+  # --- Email (SMTP) ---
+  email:
+    enabled: false
+    smtp_host: "smtp.gmail.com"
+    smtp_port: 587
+    username: "your-email@gmail.com"
+    password: ""  # Use App Password for Gmail (or env: SAFEX_EMAIL_PASSWORD)
+    from_addr: "safex-alerts@yourcompany.com"
+    to_addrs:
+      - "safety-officer@yourcompany.com"
+      - "plant-manager@yourcompany.com"
+
+  # --- Webhook (Slack, Teams, custom endpoint) ---
+  webhook:
+    enabled: false
+    url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+    headers:
+      Content-Type: "application/json"
+
+# ============================================================
+# MONITORING SETTINGS
+# ============================================================
+monitoring:
+  health_check_interval_sec: 30  # Log camera status every 30s
+  max_reconnect_attempts: -1     # -1 = unlimited retries
+  reconnect_delay_sec: 5         # Wait between reconnection attempts
+  save_all_detections: false     # Save every frame with detections (disk heavy)
+  violation_video_clip_sec: 10   # Save N seconds clip around violation (0 = disabled)
