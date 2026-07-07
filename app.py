@@ -26,37 +26,228 @@ logger = setup_logger("safex.app")
 # ============================================================
 st.set_page_config(
     page_title="SafeX — Live PPE Monitor",
-    page_icon="\U0001f6e1\ufe0f",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # ============================================================
-# Custom CSS
+# World-class CSS
 # ============================================================
 st.markdown("""
 <style>
-    .main-header { font-size:2.2rem; font-weight:700; color:#FF4B4B; text-align:center; }
-    .sub-header { font-size:0.9rem; color:#888; text-align:center; margin-bottom:1rem; }
-    .live-badge {
-        display:inline-block; background:#FF4B4B; color:white;
-        padding:3px 12px; border-radius:12px; font-size:0.8rem; font-weight:bold;
-        animation: pulse 1.5s infinite;
-    }
-    .offline-badge {
-        display:inline-block; background:#444; color:#ccc;
-        padding:3px 12px; border-radius:12px; font-size:0.8rem;
-    }
-    .violation-card {
-        background:#1e0f0f; border:1px solid #FF4B4B33;
-        border-left: 3px solid #FF4B4B;
-        border-radius:6px; padding:10px 12px; margin-bottom:8px;
-        font-size:0.85rem;
-    }
-    .violation-high { border-left-color: #FF8C00 !important; background:#1e150a !important; }
-    .violation-medium { border-left-color: #FFD700 !important; background:#1a190a !important; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-    .stMetric [data-testid="metric-container"] { background:#1a1a2e; border-radius:8px; padding:10px; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Global ── */
+html, body, [data-testid="stAppViewContainer"], .main {
+    background-color: #07080d !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #c8cdd8;
+}
+[data-testid="stSidebar"] {
+    background-color: #0b0d18 !important;
+    border-right: 1px solid #181c2e !important;
+}
+[data-testid="stSidebar"] > div:first-child { padding: 1.4rem 1rem 1rem; }
+.block-container { padding-top: 1.2rem !important; max-width: 100% !important; }
+
+/* ── Header ── */
+.sx-header {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; padding: 20px 0 4px;
+}
+.sx-shield { color: #e63946; line-height: 1; }
+.sx-title {
+    font-size: 1.9rem; font-weight: 700; letter-spacing: -0.04em;
+    color: #edf2f7; margin: 0; line-height: 1;
+}
+.sx-title b { color: #e63946; font-weight: 800; }
+.sx-sub {
+    text-align: center; font-size: 0.72rem; color: #2e3556;
+    letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 1.4rem;
+}
+
+/* ── Status strip ── */
+.sx-status {
+    display: flex; align-items: center; gap: 28px;
+    background: #0b0d18; border: 1px solid #181c2e;
+    border-radius: 8px; padding: 9px 18px; margin-bottom: 14px;
+    font-size: 0.8rem;
+}
+.sx-status-item { display: flex; align-items: center; gap: 6px; }
+.sx-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+}
+.sx-dot-live   { background:#e63946; box-shadow:0 0 7px #e6394688; animation: sx-blink 1.2s ease infinite; }
+.sx-dot-idle   { background:#2a2e45; }
+.sx-dot-ok     { background:#2dd4bf; box-shadow:0 0 7px #2dd4bf66; }
+.sx-dot-warn   { background:#f59e0b; }
+.sx-dot-err    { background:#e63946; }
+.sx-lbl  { font-size:0.68rem; color:#2e3556; text-transform:uppercase; letter-spacing:0.1em; }
+.sx-val  { color:#9ba3bf; font-weight:500; }
+.sx-fps  { font-family:'JetBrains Mono',monospace; color:#4fc3f7; font-size:0.8rem; font-weight:500; }
+.sx-sep  { width:1px; height:18px; background:#181c2e; }
+@keyframes sx-blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+/* ── KPI cards ── */
+.sx-kpi-row { display:flex; gap:10px; margin-bottom:14px; }
+.sx-kpi {
+    flex:1; background:#0b0d18;
+    border:1px solid #181c2e; border-radius:10px;
+    padding:14px 18px; position:relative; overflow:hidden;
+}
+.sx-kpi::after {
+    content:''; position:absolute;
+    top:0; left:0; right:0; height:2px;
+    background: var(--accent);
+}
+.sx-kpi-lbl { font-size:0.66rem; color:#2e3556; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px; }
+.sx-kpi-val {
+    font-family:'JetBrains Mono',monospace;
+    font-size:2.1rem; font-weight:700; line-height:1;
+    color: var(--accent);
+}
+
+/* ── Control buttons ── */
+.stButton > button {
+    font-family:'Inter',sans-serif !important;
+    font-size:0.78rem !important;
+    font-weight:600 !important;
+    letter-spacing:0.06em !important;
+    text-transform:uppercase !important;
+    border-radius:6px !important;
+    padding:9px 20px !important;
+    transition:all 0.15s ease !important;
+}
+.stButton > button[kind="primary"] {
+    background:#e63946 !important; color:#fff !important; border:none !important;
+}
+.stButton > button[kind="primary"]:hover {
+    background:#c8303a !important; box-shadow:0 4px 16px #e6394440 !important;
+    transform:translateY(-1px) !important;
+}
+.stButton > button:not([kind="primary"]) {
+    background:#0f1120 !important; color:#6b7594 !important;
+    border:1px solid #1e2340 !important;
+}
+.stButton > button:not([kind="primary"]):hover {
+    background:#141829 !important; color:#9ba3bf !important;
+    border-color:#2a3060 !important;
+}
+.stButton > button:disabled {
+    opacity:0.3 !important; cursor:not-allowed !important;
+}
+
+/* ── Feed area ── */
+.sx-feed-wrap {
+    border:1px solid #181c2e; border-radius:10px; overflow:hidden;
+    background:#07080d; margin-bottom:8px;
+}
+.sx-feed-offline {
+    height:340px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    background:#0b0d18; border:1px dashed #181c2e;
+    border-radius:10px; gap:10px;
+}
+.sx-feed-offline-icon { color:#1e2235; }
+.sx-feed-offline-text { font-size:0.8rem; color:#2a2e45; letter-spacing:0.08em; }
+
+/* ── Zoom strip ── */
+.sx-zoom-wrap {
+    background:#0b0d18; border:1px solid #181c2e;
+    border-radius:8px; padding:10px 14px 4px; margin-top:6px;
+}
+.sx-zoom-label {
+    font-size:0.65rem; color:#2e3556;
+    text-transform:uppercase; letter-spacing:0.12em;
+    margin-bottom:2px;
+}
+
+/* ── Alert banner ── */
+.sx-alert {
+    background:#140808; border:1px solid #e6394430;
+    border-left:3px solid #e63946;
+    border-radius:0 6px 6px 0; padding:8px 14px;
+    font-size:0.79rem; color:#e63946;
+    font-family:'JetBrains Mono',monospace;
+    margin-top:8px; line-height:1.5;
+}
+
+/* ── Violation log ── */
+.sx-log-header {
+    display:flex; justify-content:space-between;
+    align-items:center; margin-bottom:10px;
+}
+.sx-log-title { font-size:0.68rem; color:#2e3556; text-transform:uppercase; letter-spacing:0.14em; }
+.sx-log-count { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#2e3556; }
+.sx-vcard {
+    border-left:3px solid; border-radius:0 6px 6px 0;
+    padding:9px 13px; margin-bottom:5px;
+    background:#0b0d18;
+    border-top:1px solid #181c2e;
+    border-right:1px solid #181c2e;
+    border-bottom:1px solid #181c2e;
+    font-size:0.8rem; line-height:1.65;
+}
+.sx-vcard.c { border-left-color:#e63946; }
+.sx-vcard.h { border-left-color:#f59e0b; }
+.sx-vcard.m { border-left-color:#f0b429; }
+.sx-vid  { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#3a4268; }
+.sx-vsev { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; }
+.sx-vsev.c { color:#e63946; } .sx-vsev.h { color:#f59e0b; } .sx-vsev.m { color:#f0b429; }
+.sx-vppe { color:#9ba3bf; font-size:0.82rem; font-weight:500; }
+.sx-vmeta { color:#3a4268; font-size:0.72rem; }
+.sx-vtime { float:right; font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#2e3556; }
+.sx-empty { text-align:center; padding:32px 0; font-size:0.78rem; color:#1e2235; letter-spacing:0.08em; }
+
+/* ── Sidebar styles ── */
+.sx-sb-title { font-size:1rem; font-weight:700; color:#edf2f7; letter-spacing:-0.02em; line-height:1; margin:0; }
+.sx-sb-title span { color:#e63946; }
+.sx-sb-ver { font-size:0.65rem; color:#1e2235; letter-spacing:0.12em; text-transform:uppercase; margin-top:2px; }
+.sx-sb-sec { font-size:0.63rem; font-weight:600; color:#2e3556; text-transform:uppercase; letter-spacing:0.14em; margin:18px 0 8px; padding-left:2px; border-left:2px solid #181c2e; padding-left:8px; }
+.sx-divider { border:none; border-top:1px solid #181c2e; margin:14px 0; }
+
+/* ── Streamlit widget overrides ── */
+div[data-testid="stSlider"] label p,
+div[data-testid="stTextInput"] label p,
+div[data-testid="stSelectbox"] label p,
+div[data-testid="stRadio"] label p,
+div[data-testid="stNumberInput"] label p,
+div[data-testid="stCheckbox"] label p {
+    font-size:0.73rem !important; color:#4a5272 !important;
+    text-transform:uppercase; letter-spacing:0.09em;
+}
+div[data-testid="stTextInput"] input {
+    background:#0b0d18 !important; border:1px solid #181c2e !important;
+    color:#c8cdd8 !important; border-radius:6px !important;
+    font-size:0.82rem !important; font-family:'Inter',sans-serif !important;
+}
+div[data-testid="stTextInput"] input:focus {
+    border-color:#e63946 !important; box-shadow:0 0 0 1px #e6394430 !important;
+    outline:none !important;
+}
+div[data-testid="stSelectbox"] > div > div {
+    background:#0b0d18 !important; border:1px solid #181c2e !important;
+    border-radius:6px !important; color:#c8cdd8 !important;
+}
+[data-testid="stRadio"] div[role="radio"] {
+    font-size:0.8rem !important; color:#6b7594 !important;
+}
+div[data-testid="stSlider"] [data-testid="stSliderThumb"] { background:#e63946 !important; }
+div[data-testid="stSlider"] div[role="slider"] { border-color:#e63946 !important; }
+.stSlider [data-baseweb="slider"] div[data-testid="stSlider"] div { background:#e63946 !important; }
+div[data-testid="stCheckbox"] svg { color:#e63946 !important; }
+[data-testid="stMetric"],
+[data-testid="metric-container"] { display:none !important; }
+hr { border-color:#181c2e !important; }
+.stSpinner > div { border-top-color:#e63946 !important; }
+p, li { color:#9ba3bf !important; }
+code { background:#0f1120 !important; border:1px solid #181c2e !important; color:#4fc3f7 !important; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:#07080d; }
+::-webkit-scrollbar-thumb { background:#1e2340; border-radius:2px; }
+::-webkit-scrollbar-thumb:hover { background:#2e3556; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -78,7 +269,7 @@ def init_state():
         "violation_count": 0,
         "persons_count": 0,
         "vio_id_counter": 0,
-        "camera_status": "\u26ab Offline",
+        "camera_status": "offline",
         "last_alert_text": "",
         "fps_display": 0.0,
         "zoom_factor": 1.0,
@@ -202,10 +393,10 @@ class LiveMonitor:
             cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
         if not cap.isOpened():
-            st.session_state.camera_status = "\u274c Failed to connect"
+            st.session_state.camera_status = "error"
             return
 
-        st.session_state.camera_status = "\U0001f7e2 Connected"
+        st.session_state.camera_status = "connected"
         interval = 1.0 / max(self.process_fps, 1)
         last_process = 0.0
         frame_counter = 0
@@ -214,7 +405,7 @@ class LiveMonitor:
         while self._running:
             ret, frame = cap.read()
             if not ret:
-                st.session_state.camera_status = "\u26a0\ufe0f Stream interrupted"
+                st.session_state.camera_status = "interrupted"
                 time.sleep(1)
                 continue
 
@@ -255,7 +446,7 @@ class LiveMonitor:
             time.sleep(0.02)
 
         cap.release()
-        st.session_state.camera_status = "\u26ab Stopped"
+        st.session_state.camera_status = "offline"
 
     # ----------------------------------------------------------
     def _log_violation(self, violation, frame: np.ndarray):
@@ -294,8 +485,7 @@ class LiveMonitor:
         )[:200]
         st.session_state.violation_count += 1
         st.session_state.last_alert_text = (
-            f"\u26a0\ufe0f [{entry['severity'].upper()}] {entry['missing_ppe']} "
-            f"\u2014 {entry['time']}  |  ID: {vio_id}"
+            f"[{entry['severity'].upper()}]  {entry['missing_ppe']}  —  {entry['time']}  |  {vio_id}"
         )
 
 
@@ -330,16 +520,19 @@ def apply_zoom(
 def render_sidebar() -> dict:
     """Render settings sidebar. Returns a params dict."""
     with st.sidebar:
-        st.markdown("## \U0001f6e1\ufe0f SafeX")
-        st.caption("Real-Time PPE Monitor v2.0")
-        st.divider()
+        st.markdown(
+            '<p class="sx-sb-title"><b>Safe</b>X</p>'
+            '<p class="sx-sb-ver">Real-Time PPE Monitor &nbsp;v2.0</p>',
+            unsafe_allow_html=True
+        )
+        st.markdown('<hr class="sx-divider">', unsafe_allow_html=True)
 
-        # Camera source
-        st.subheader("\U0001f4f7 Camera Source")
+        # ─ Camera source ─
+        st.markdown('<div class="sx-sb-sec">Camera Source</div>', unsafe_allow_html=True)
         source_type = st.radio(
             "Input type",
-            ["RTSP Stream", "Webcam", "Video File (test)"],
-            horizontal=True
+            ["RTSP Stream", "Webcam", "Video File"],
+            horizontal=True, label_visibility="collapsed"
         )
         if source_type == "RTSP Stream":
             cam_url = st.text_input(
@@ -353,37 +546,32 @@ def render_sidebar() -> dict:
             cam_url = str(int(cam_idx))
         else:
             cam_url = st.text_input(
-                "Video file path",
-                placeholder="/path/to/test_footage.mp4"
+                "File path",
+                placeholder="/path/to/footage.mp4"
             )
 
-        process_fps = st.slider(
-            "Detection FPS", 1, 15, 5, 1,
-            help="Frames per second to run inference on."
-        )
-        st.divider()
+        process_fps = st.slider("Detection FPS", 1, 15, 5, 1)
+        st.markdown('<hr class="sx-divider">', unsafe_allow_html=True)
 
-        # Model
-        st.subheader("\U0001f916 Model")
+        # ─ Model ─
+        st.markdown('<div class="sx-sb-sec">Detection Model</div>', unsafe_allow_html=True)
         model_choice = st.selectbox(
             "Weights",
-            ["yolov8n.pt (Fastest)", "yolov8s.pt (Balanced)",
-             "yolov8m.pt (Accurate)", "yolov8l.pt (Best)", "Custom"]
+            ["yolov8n.pt  —  Fastest", "yolov8s.pt  —  Balanced",
+             "yolov8m.pt  —  Accurate", "yolov8l.pt  —  Best", "Custom"]
         )
         if model_choice == "Custom":
-            weights = st.text_input(
-                "Custom weights path", placeholder="path/to/best.pt"
-            )
+            weights = st.text_input("Weights path", placeholder="path/to/best.pt")
         else:
-            weights = model_choice.split(" ")[0]
-        confidence = st.slider("Confidence threshold", 0.1, 0.9, 0.45, 0.05)
-        st.divider()
+            weights = model_choice.split("  ")[0]
+        confidence = st.slider("Confidence", 0.1, 0.9, 0.45, 0.05)
+        st.markdown('<hr class="sx-divider">', unsafe_allow_html=True)
 
-        # PPE rules
-        st.subheader("\U0001f9ba Required PPE")
+        # ─ PPE rules ─
+        st.markdown('<div class="sx-sb-sec">Required PPE</div>', unsafe_allow_html=True)
         helmet_req = st.checkbox("Helmet", value=True)
-        vest_req = st.checkbox("Safety Vest", value=True)
-        shoes_req = st.checkbox("Safety Shoes", value=False)
+        vest_req   = st.checkbox("Safety Vest", value=True)
+        shoes_req  = st.checkbox("Safety Shoes", value=False)
         required_ppe = [
             p for p, v in [
                 ("helmet", helmet_req),
@@ -391,24 +579,26 @@ def render_sidebar() -> dict:
                 ("safety_shoes", shoes_req)
             ] if v
         ]
-        st.divider()
+        st.markdown('<hr class="sx-divider">', unsafe_allow_html=True)
 
-        # Alerts
-        st.subheader("\U0001f514 Alerts")
+        # ─ Alerts ─
+        st.markdown('<div class="sx-sb-sec">Alerts</div>', unsafe_allow_html=True)
         tg_enabled = st.checkbox("Telegram", value=False)
         tg_token, tg_chat = "", ""
         if tg_enabled:
             tg_token = st.text_input("Bot Token", type="password")
-            tg_chat = st.text_input("Chat ID")
+            tg_chat  = st.text_input("Chat ID")
 
-        wh_enabled = st.checkbox("Webhook (Slack / Teams)", value=False)
+        wh_enabled = st.checkbox("Webhook  (Slack / Teams)", value=False)
         wh_url = ""
         if wh_enabled:
-            wh_url = st.text_input(
-                "Webhook URL", placeholder="https://hooks.slack.com/..."
-            )
-        st.divider()
-        st.caption("Powered by YOLOv8 + OpenCV")
+            wh_url = st.text_input("URL", placeholder="https://hooks.slack.com/...")
+        st.markdown('<hr class="sx-divider">', unsafe_allow_html=True)
+        st.markdown(
+            '<p style="font-size:0.62rem;color:#1e2235;letter-spacing:0.1em;">'
+            'POWERED BY YOLOV8 + OPENCV</p>',
+            unsafe_allow_html=True
+        )
 
         return {
             "cam_url": cam_url,
@@ -427,41 +617,87 @@ def render_sidebar() -> dict:
 # ============================================================
 # Main UI
 # ============================================================
+def _status_dot(status: str) -> str:
+    """Return a CSS dot class based on camera status string."""
+    m = {
+        "connected":   "sx-dot-ok",
+        "interrupted": "sx-dot-warn",
+        "error":       "sx-dot-err",
+    }
+    return m.get(status, "sx-dot-idle")
+
+
+def _status_label(status: str) -> str:
+    m = {
+        "connected":   "Connected",
+        "interrupted": "Interrupted",
+        "error":       "Error",
+        "offline":     "Offline",
+    }
+    return m.get(status, status.capitalize())
+
+
 def main():
     """Main real-time PPE monitoring dashboard."""
     params = render_sidebar()
 
-    # ── Header ──
-    st.markdown(
-        '<p class="main-header">\U0001f6e1\ufe0f SafeX \u2014 Live PPE Monitor</p>',
-        unsafe_allow_html=True
+    # ── Header (one shield, no other icons) ──
+    SHIELD_SVG = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" '
+        'fill="#e63946" width="36" height="36">'
+        '<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 '
+        '9-12V5l-9-4z"/>'
+        '</svg>'
     )
     st.markdown(
-        '<p class="sub-header">Real-time AI-powered PPE compliance monitoring — industrial cameras</p>',
+        f'<div class="sx-header">{SHIELD_SVG}'
+        f'<h1 class="sx-title"><b>Safe</b>X &mdash; Live PPE Monitor</h1></div>'
+        f'<p class="sx-sub">AI-Powered Industrial Safety Compliance &nbsp;&bull;&nbsp; Real-Time Detection</p>',
         unsafe_allow_html=True
     )
 
-    # ── Control Bar ──
-    c1, c2, c3, c4 = st.columns([1.2, 1, 2, 1])
+    # ── Control row ──
+    c1, c2, c_space = st.columns([1.1, 0.9, 4])
     with c1:
         start_btn = st.button(
-            "\u25b6\ufe0f Start Monitor",
-            type="primary",
-            use_container_width=True,
-            disabled=st.session_state.running
+            "Start Monitor", type="primary",
+            use_container_width=True, disabled=st.session_state.running
         )
     with c2:
         stop_btn = st.button(
-            "\u23f9 Stop",
-            use_container_width=True,
+            "Stop", use_container_width=True,
             disabled=not st.session_state.running
         )
-    with c3:
-        st.markdown(f"**Status:** {st.session_state.camera_status}")
-    with c4:
-        st.markdown(f"**{st.session_state.fps_display:.0f} FPS**")
 
-    # ── Start Logic ──
+    # Status strip
+    live_dot  = "sx-dot-live" if st.session_state.running else "sx-dot-idle"
+    live_text = "Live" if st.session_state.running else "Idle"
+    cam_dot   = _status_dot(st.session_state.camera_status)
+    cam_text  = _status_label(st.session_state.camera_status)
+    fps_val   = f"{st.session_state.fps_display:.0f}"
+    st.markdown(
+        f'<div class="sx-status">'
+        f'  <div class="sx-status-item">'
+        f'    <span class="sx-dot {live_dot}"></span>'
+        f'    <span class="sx-lbl">Monitor&nbsp;</span>'
+        f'    <span class="sx-val">{live_text}</span>'
+        f'  </div>'
+        f'  <div class="sx-sep"></div>'
+        f'  <div class="sx-status-item">'
+        f'    <span class="sx-dot {cam_dot}"></span>'
+        f'    <span class="sx-lbl">Camera&nbsp;</span>'
+        f'    <span class="sx-val">{cam_text}</span>'
+        f'  </div>'
+        f'  <div class="sx-sep"></div>'
+        f'  <div class="sx-status-item">'
+        f'    <span class="sx-lbl">FPS&nbsp;</span>'
+        f'    <span class="sx-fps">{fps_val}</span>'
+        f'  </div>'
+        f'</div>',
+        unsafe_allow_html=True
+    )
+
+    # ── Start logic ──
     if start_btn:
         cam_url = params["cam_url"]
         if not cam_url and cam_url != "0":
@@ -469,34 +705,24 @@ def main():
         else:
             if st.session_state.config is None:
                 st.session_state.config = _default_config()
-
-            # Patch config from sidebar values
             st.session_state.config["model"]["weights"] = params["weights"]
             st.session_state.config["model"]["confidence_threshold"] = params["confidence"]
             st.session_state.config["violation_rules"]["required_ppe"] = params["required_ppe"]
-
-            # Telegram
             if params["tg_enabled"] and params["tg_token"]:
                 st.session_state.config.setdefault("alerts", {})
                 st.session_state.config["alerts"]["enabled"] = True
                 st.session_state.config["alerts"]["telegram"] = {
-                    "enabled": True,
-                    "bot_token": params["tg_token"],
+                    "enabled": True, "bot_token": params["tg_token"],
                     "chat_id": params["tg_chat"],
                 }
-            # Webhook
             if params["wh_enabled"] and params["wh_url"]:
                 st.session_state.config.setdefault("alerts", {})
                 st.session_state.config["alerts"]["enabled"] = True
                 st.session_state.config["alerts"]["webhook"] = {
-                    "enabled": True,
-                    "url": params["wh_url"],
+                    "enabled": True, "url": params["wh_url"],
                 }
-
-            # Reset alert manager so it picks up new config
             st.session_state.alert_manager = None
             load_system()
-
             monitor = LiveMonitor(
                 source=cam_url,
                 detector=st.session_state.detector,
@@ -509,69 +735,72 @@ def main():
             monitor.start()
             st.rerun()
 
-    # ── Stop Logic ──
+    # ── Stop logic ──
     if stop_btn:
         if st.session_state.monitor:
             st.session_state.monitor.stop()
         st.session_state.running = False
-        st.session_state.camera_status = "\u26ab Stopped"
+        st.session_state.camera_status = "offline"
         st.rerun()
 
-    st.divider()
-
-    # ── KPI Row ──
+    # ── KPI cards (pure HTML) ──
     sev_counts = {"critical": 0, "high": 0, "medium": 0}
     for v in st.session_state.violations_log:
-        sev = v.get("severity", "medium")
-        sev_counts[sev] = sev_counts.get(sev, 0) + 1
+        sev_counts[v.get("severity", "medium")] = sev_counts.get(v.get("severity", "medium"), 0) + 1
 
-    k1, k2, k3, k4 = st.columns(4)
-    with k1:
-        st.metric("\U0001f6a8 Total Violations", st.session_state.violation_count)
-    with k2:
-        st.metric("\U0001f534 Critical", sev_counts["critical"])
-    with k3:
-        st.metric("\U0001f7e0 High", sev_counts["high"])
-    with k4:
-        st.metric("\U0001f465 Persons Detected", st.session_state.persons_count)
+    st.markdown(
+        f'<div class="sx-kpi-row">'
+        f'  <div class="sx-kpi sx-kpi-total"   style="--accent:#e63946">'
+        f'    <div class="sx-kpi-lbl">Total Violations</div>'
+        f'    <div class="sx-kpi-val">{st.session_state.violation_count}</div>'
+        f'  </div>'
+        f'  <div class="sx-kpi sx-kpi-critical" style="--accent:#e63946">'
+        f'    <div class="sx-kpi-lbl">Critical</div>'
+        f'    <div class="sx-kpi-val">{sev_counts["critical"]}</div>'
+        f'  </div>'
+        f'  <div class="sx-kpi sx-kpi-high"     style="--accent:#f59e0b">'
+        f'    <div class="sx-kpi-lbl">High</div>'
+        f'    <div class="sx-kpi-val">{sev_counts["high"]}</div>'
+        f'  </div>'
+        f'  <div class="sx-kpi sx-kpi-persons"  style="--accent:#2dd4bf">'
+        f'    <div class="sx-kpi-lbl">Persons Detected</div>'
+        f'    <div class="sx-kpi-val">{st.session_state.persons_count}</div>'
+        f'  </div>'
+        f'</div>',
+        unsafe_allow_html=True
+    )
 
-    st.divider()
-
-    # ── Video Feed + Violation Log (side by side) ──
-    video_col, log_col = st.columns([3, 2])
+    # ── Two-column layout: video feed | violation log ──
+    video_col, log_col = st.columns([3, 2], gap="medium")
 
     with video_col:
-        # Live / Offline badge
-        if st.session_state.running:
-            st.markdown('<span class="live-badge">\u25cf LIVE</span>', unsafe_allow_html=True)
-        else:
-            st.markdown('<span class="offline-badge">\u25cf OFFLINE</span>', unsafe_allow_html=True)
-
         # Zoom controls
+        st.markdown('<div class="sx-zoom-wrap">', unsafe_allow_html=True)
         zc1, zc2, zc3 = st.columns(3)
         with zc1:
+            st.markdown('<div class="sx-zoom-label">Zoom</div>', unsafe_allow_html=True)
             zoom_factor = st.slider(
-                "\U0001f50d Zoom", 1.0, 8.0,
-                st.session_state.zoom_factor, 0.25,
-                key="zoom_factor_slider"
+                "z", 1.0, 8.0, st.session_state.zoom_factor, 0.25,
+                key="zoom_factor_slider", label_visibility="collapsed"
             )
             st.session_state.zoom_factor = zoom_factor
         with zc2:
+            st.markdown('<div class="sx-zoom-label">Center X %</div>', unsafe_allow_html=True)
             zoom_x = st.slider(
-                "\u2194\ufe0f Center X%", 5, 95,
-                st.session_state.zoom_x, 5,
-                key="zoom_x_slider"
+                "x", 5, 95, st.session_state.zoom_x, 5,
+                key="zoom_x_slider", label_visibility="collapsed"
             )
             st.session_state.zoom_x = zoom_x
         with zc3:
+            st.markdown('<div class="sx-zoom-label">Center Y %</div>', unsafe_allow_html=True)
             zoom_y = st.slider(
-                "\u2195\ufe0f Center Y%", 5, 95,
-                st.session_state.zoom_y, 5,
-                key="zoom_y_slider"
+                "y", 5, 95, st.session_state.zoom_y, 5,
+                key="zoom_y_slider", label_visibility="collapsed"
             )
             st.session_state.zoom_y = zoom_y
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        # Frame display
+        # Video frame
         frame_slot = st.empty()
         if st.session_state.latest_frame is not None:
             frame = st.session_state.latest_frame.copy()
@@ -580,64 +809,77 @@ def main():
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame_slot.image(frame_rgb, use_container_width=True)
         else:
-            frame_slot.info(
-                "\u23f3 Waiting for camera feed\u2026  "
-                "Set a camera source in the sidebar then click **\u25b6\ufe0f Start Monitor**."
+            frame_slot.markdown(
+                '<div class="sx-feed-offline">'
+                '  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" '
+                'fill="#1e2235" width="40" height="40">'
+                '<path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 '
+                '1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>'
+                '  </svg>'
+                '  <span class="sx-feed-offline-text">No signal &mdash; configure camera source and start monitor</span>'
+                '</div>',
+                unsafe_allow_html=True
             )
 
-        # Last alert banner
+        # Alert banner
         if st.session_state.last_alert_text:
-            st.warning(st.session_state.last_alert_text)
+            st.markdown(
+                f'<div class="sx-alert">{st.session_state.last_alert_text}</div>',
+                unsafe_allow_html=True
+            )
 
     with log_col:
-        st.subheader("\U0001f4cb Violation Log")
+        n = len(st.session_state.violations_log)
+        st.markdown(
+            f'<div class="sx-log-header">'
+            f'  <span class="sx-log-title">Violation Log</span>'
+            f'  <span class="sx-log-count">{n} events</span>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
 
-        lcol1, lcol2 = st.columns(2)
-        with lcol1:
-            if st.button("\U0001f5d1\ufe0f Clear Log", use_container_width=True):
+        act1, act2 = st.columns(2)
+        with act1:
+            if st.button("Clear Log", use_container_width=True):
                 st.session_state.violations_log = []
                 st.session_state.violation_count = 0
                 st.session_state.last_alert_text = ""
                 st.rerun()
-        with lcol2:
-            import pandas as pd, json as _json
+        with act2:
+            import pandas as pd
             if st.session_state.violations_log:
                 csv_bytes = pd.DataFrame(st.session_state.violations_log).drop(
                     columns=["snapshot"], errors="ignore"
                 ).to_csv(index=False).encode()
                 st.download_button(
-                    "\U0001f4e5 Export CSV",
-                    csv_bytes,
-                    file_name=f"safex_violations_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                    mime="text/csv",
-                    use_container_width=True,
+                    "Export CSV", csv_bytes,
+                    file_name=f"safex_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    mime="text/csv", use_container_width=True,
                 )
 
         if st.session_state.violations_log:
-            for entry in st.session_state.violations_log[:25]:
+            log_html = ""
+            for entry in st.session_state.violations_log[:30]:
                 sev = entry["severity"]
-                color = (
-                    "#FF4B4B" if sev == "critical"
-                    else "#FF8C00" if sev == "high"
-                    else "#FFD700"
+                s = "c" if sev == "critical" else "h" if sev == "high" else "m"
+                log_html += (
+                    f'<div class="sx-vcard {s}">'
+                    f'  <span class="sx-vtime">{entry["time"]}</span>'
+                    f'  <span class="sx-vsev {s}">{sev.upper()}</span><br>'
+                    f'  <span class="sx-vppe">{entry["missing_ppe"]}</span><br>'
+                    f'  <span class="sx-vmeta">'
+                    f'    Zone: {entry.get("zone","General")} &nbsp;&bull;&nbsp; '
+                    f'    Conf: {entry.get("confidence","")}'
+                    f'  </span><br>'
+                    f'  <span class="sx-vid">{entry["id"]}</span>'
+                    f'</div>'
                 )
-                extra_class = (
-                    "" if sev == "critical"
-                    else "violation-high" if sev == "high"
-                    else "violation-medium"
-                )
-                st.markdown(
-                    f"""<div class="violation-card {extra_class}">
-  <span style="color:{color};font-weight:bold">&#9632; {sev.upper()}</span>
-  <span style="float:right;color:#888;font-size:0.8rem">{entry['time']}</span><br>
-  <b>ID:</b> <code>{entry['id']}</code><br>
-  <b>Missing PPE:</b> {entry['missing_ppe']}<br>
-  <b>Zone:</b> {entry.get('zone','General')} &nbsp; <b>Conf:</b> {entry.get('confidence','')}
-</div>""",
-                    unsafe_allow_html=True,
-                )
+            st.markdown(log_html, unsafe_allow_html=True)
         else:
-            st.success("\u2705 No violations recorded yet.")
+            st.markdown(
+                '<div class="sx-empty">No violations recorded</div>',
+                unsafe_allow_html=True
+            )
 
     # ── Auto-refresh while live ──
     if st.session_state.running:
