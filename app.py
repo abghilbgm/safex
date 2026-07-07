@@ -248,6 +248,132 @@ code { background:#0f1120 !important; border:1px solid #181c2e !important; color
 ::-webkit-scrollbar-track { background:#07080d; }
 ::-webkit-scrollbar-thumb { background:#1e2340; border-radius:2px; }
 ::-webkit-scrollbar-thumb:hover { background:#2e3556; }
+
+/* ── Force dark on the full app shell ── */
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewBlockContainer"],
+[data-testid="stMain"],
+[data-testid="stMainBlockContainer"] {
+    background-color: #07080d !important;
+}
+[data-testid="stHeader"] { background-color: #07080d !important; border-bottom: 1px solid #181c2e !important; }
+[data-testid="stBottom"], [data-testid="stBottomBlockContainer"] { background-color: #07080d !important; }
+
+/* ── Hide Streamlit branding footer ── */
+#MainMenu { visibility: hidden; }
+footer    { visibility: hidden; }
+header    { visibility: hidden; }
+
+/* ── BaseWeb popover / dropdown (selectbox open state) ── */
+[data-baseweb="popover"],
+[data-baseweb="popover"] > div,
+[data-baseweb="popover"] > div > div {
+    background-color: #0b0d18 !important;
+    border: 1px solid #181c2e !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 32px #00000088 !important;
+}
+[data-baseweb="menu"] {
+    background-color: #0b0d18 !important;
+}
+[data-baseweb="list-item"],
+[role="option"] {
+    background-color: #0b0d18 !important;
+    color: #9ba3bf !important;
+    font-size: 0.82rem !important;
+}
+[data-baseweb="list-item"]:hover,
+[role="option"]:hover,
+[role="option"][aria-selected="true"] {
+    background-color: #141829 !important;
+    color: #f0f2f7 !important;
+}
+
+/* ── BaseWeb input / select ── */
+[data-baseweb="base-input"],
+[data-baseweb="input"],
+[data-baseweb="textarea"] {
+    background-color: #0b0d18 !important;
+    border-color: #181c2e !important;
+    color: #c8cdd8 !important;
+}
+[data-baseweb="select"] > div {
+    background-color: #0b0d18 !important;
+    border-color: #181c2e !important;
+    color: #c8cdd8 !important;
+}
+[data-baseweb="select"] > div:hover,
+[data-baseweb="select"] > div:focus-within {
+    border-color: #e63946 !important;
+    box-shadow: 0 0 0 1px #e6394430 !important;
+}
+
+/* ── BaseWeb tooltip ── */
+[data-baseweb="tooltip"] > div {
+    background-color: #141829 !important;
+    color: #9ba3bf !important;
+    border: 1px solid #181c2e !important;
+    border-radius: 6px !important;
+    font-size: 0.75rem !important;
+}
+
+/* ── Radio buttons ── */
+[data-testid="stRadio"] > div {
+    gap: 6px;
+}
+[data-testid="stRadio"] label {
+    background-color: #0b0d18 !important;
+    border: 1px solid #181c2e !important;
+    border-radius: 6px !important;
+    padding: 4px 12px !important;
+    cursor: pointer !important;
+    transition: border-color 0.15s !important;
+}
+[data-testid="stRadio"] label:has(input:checked) {
+    border-color: #e63946 !important;
+    background-color: #140810 !important;
+}
+
+/* ── Slider track / thumb ── */
+[data-testid="stSlider"] [data-baseweb="slider"] > div > div:first-child {
+    background-color: #181c2e !important;
+}
+[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"] {
+    background-color: #e63946 !important;
+    border-color: #e63946 !important;
+}
+
+/* ── Number input ── */
+[data-testid="stNumberInput"] input {
+    background-color: #0b0d18 !important;
+    border: 1px solid #181c2e !important;
+    color: #c8cdd8 !important;
+    border-radius: 6px !important;
+}
+[data-testid="stNumberInput"] button {
+    background-color: #0f1120 !important;
+    border-color: #181c2e !important;
+    color: #6b7594 !important;
+}
+
+/* ── Notification / warning / info overrides ── */
+[data-testid="stNotification"] {
+    background-color: #0b0d18 !important;
+    border-color: #181c2e !important;
+}
+
+/* ── Download button ── */
+[data-testid="stDownloadButton"] > button {
+    background-color: #0f1120 !important;
+    color: #6b7594 !important;
+    border: 1px solid #1e2340 !important;
+}
+[data-testid="stDownloadButton"] > button:hover {
+    background-color: #141829 !important;
+    color: #9ba3bf !important;
+    border-color: #2a3060 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
