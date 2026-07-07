@@ -38,16 +38,9 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap');
 
 /* ── Global ── */
-html, body, [data-testid="stAppViewContainer"], .main {
-    background-color: #1C2128 !important;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: #CDD9E5;
+html, body, input, button, select, textarea {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
-[data-testid="stSidebar"] {
-    background-color: #22272E !important;
-    border-right: 1px solid #373E47 !important;
-}
-[data-testid="stSidebar"] > div:first-child { padding: 1.4rem 1rem 1rem; }
 .block-container { padding-top: 1.2rem !important; max-width: 100% !important; }
 
 /* ── Header ── */
@@ -84,7 +77,7 @@ html, body, [data-testid="stAppViewContainer"], .main {
 .sx-dot-err    { background:#FF3621; }
 .sx-lbl  { font-size:0.68rem; color:#444C56; text-transform:uppercase; letter-spacing:0.1em; }
 .sx-val  { color:#768390; font-weight:500; }
-.sx-fps  { font-family:'JetBrains Mono',monospace; color:#539BF5; font-size:0.8rem; font-weight:500; }
+.sx-fps  { font-family:'DM Mono',monospace; color:#539BF5; font-size:0.8rem; font-weight:500; }
 .sx-sep  { width:1px; height:18px; background:#373E47; }
 @keyframes sx-blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
@@ -102,14 +95,14 @@ html, body, [data-testid="stAppViewContainer"], .main {
 }
 .sx-kpi-lbl { font-size:0.66rem; color:#444C56; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px; }
 .sx-kpi-val {
-    font-family:'JetBrains Mono',monospace;
+    font-family:'DM Mono',monospace;
     font-size:2.1rem; font-weight:700; line-height:1;
     color: var(--accent);
 }
 
 /* ── Control buttons ── */
 .stButton > button {
-    font-family:'Inter',sans-serif !important;
+    font-family:'DM Sans',sans-serif !important;
     font-size:0.78rem !important;
     font-weight:600 !important;
     letter-spacing:0.06em !important;
@@ -168,7 +161,7 @@ html, body, [data-testid="stAppViewContainer"], .main {
     border-left:3px solid #FF3621;
     border-radius:0 6px 6px 0; padding:8px 14px;
     font-size:0.79rem; color:#FF3621;
-    font-family:'JetBrains Mono',monospace;
+    font-family:'DM Mono',monospace;
     margin-top:8px; line-height:1.5;
 }
 
@@ -178,7 +171,7 @@ html, body, [data-testid="stAppViewContainer"], .main {
     align-items:center; margin-bottom:10px;
 }
 .sx-log-title { font-size:0.68rem; color:#444C56; text-transform:uppercase; letter-spacing:0.14em; }
-.sx-log-count { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:#444C56; }
+.sx-log-count { font-family:'DM Mono',monospace; font-size:0.72rem; color:#444C56; }
 .sx-vcard {
     border-left:3px solid; border-radius:0 6px 6px 0;
     padding:9px 13px; margin-bottom:5px;
@@ -191,12 +184,12 @@ html, body, [data-testid="stAppViewContainer"], .main {
 .sx-vcard.c { border-left-color:#FF3621; }
 .sx-vcard.h { border-left-color:#C69026; }
 .sx-vcard.m { border-left-color:#C69026; }
-.sx-vid  { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#444C56; }
+.sx-vid  { font-family:'DM Mono',monospace; font-size:0.7rem; color:#444C56; }
 .sx-vsev { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; }
 .sx-vsev.c { color:#FF3621; } .sx-vsev.h { color:#C69026; } .sx-vsev.m { color:#C69026; }
 .sx-vppe { color:#768390; font-size:0.82rem; font-weight:500; }
 .sx-vmeta { color:#444C56; font-size:0.72rem; }
-.sx-vtime { float:right; font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#444C56; }
+.sx-vtime { float:right; font-family:'DM Mono',monospace; font-size:0.7rem; color:#444C56; }
 .sx-empty { text-align:center; padding:32px 0; font-size:0.78rem; color:#2D333B; letter-spacing:0.08em; }
 
 /* ── Sidebar styles ── */
@@ -224,7 +217,7 @@ div[data-testid="stCheckbox"] label p {
 div[data-testid="stTextInput"] input {
     background:#22272E !important; border:1px solid #373E47 !important;
     color:#CDD9E5 !important; border-radius:6px !important;
-    font-size:0.82rem !important; font-family:'Inter',sans-serif !important;
+    font-size:0.82rem !important; font-family:'DM Sans',sans-serif !important;
 }
 div[data-testid="stTextInput"] input:focus {
     border-color:#FF3621 !important; box-shadow:0 0 0 1px #e6394430 !important;
@@ -258,30 +251,8 @@ code { background:#2D333B !important; border:1px solid #373E47 !important; color
 ::-webkit-scrollbar-thumb:hover { background:#444C56; }
 
 /* ── Force dark on the full app shell ── */
-.stApp,
-[data-testid="stAppViewContainer"],
-[data-testid="stAppViewBlockContainer"],
-[data-testid="stMain"],
-[data-testid="stMainBlockContainer"] {
-    background-color: #1C2128 !important;
-}
-[data-testid="stHeader"] {
-    background-color: #1C2128 !important;
-    border-bottom: 1px solid #373E47 !important;
-}
-[data-testid="stBottom"],
-[data-testid="stBottomBlockContainer"] {
-    background-color: #1C2128 !important;
-}
-/* Only hide the footer text, keep the header toolbar intact */
 footer { visibility: hidden; }
-footer::after {
-    content: 'SafeX v2.0';
-    visibility: visible;
-    font-size: 0.6rem;
-    color: #2D333B;
-    letter-spacing: 0.1em;
-}
+footer::after { content: 'SafeX v2.0'; visibility: visible; font-size: 0.6rem; color: #444C56; }
 
 /* ── BaseWeb popover / dropdown (selectbox open state) ── */
 [data-baseweb="popover"],
