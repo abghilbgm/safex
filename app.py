@@ -503,7 +503,7 @@ class LiveMonitor:
         except (ValueError, TypeError):
             src = self.source               # RTSP URL or file path
 
-        cap = cv2.VideoCapture(src)
+        cap = cv2.VideoCapture(src, cv2.CAP_FFMPEG) if isinstance(src, str) and "rtsp" in src.lower() else cv2.VideoCapture(src)
         if isinstance(src, str) and "rtsp" in src.lower():
             cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
