@@ -19,30 +19,30 @@
 #   - "/path/to/video.mp4"  to simulate live feed from a file
 
 cameras:
-  - name: "Gate-1"
-    url: "rtsp://admin:password@192.168.1.101:554/stream1"  # <-- UPDATE
+  - name: "NVR-Cam2"
+    url: "rtsp://admi:mngr1234@192.168.100.65:554/Streaming/Channels/201"
     enabled: true
-    fps_process: 2  # Analyze 2 frames/sec
+    fps_process: 2
     zone: "Main Gate"
     required_ppe: ["helmet", "vest", "safety_shoes"]
 
   - name: "Furnace-Area"
-    url: "rtsp://admin:password@192.168.1.102:554/stream1"  # <-- UPDATE
-    enabled: true
+    url: "rtsp://admi:mngr1234@192.168.100.65:554/Streaming/Channels/301"
+    enabled: false  # Enable when ready
     fps_process: 2
     zone: "Furnace Area"
     required_ppe: ["helmet", "vest", "safety_shoes"]
 
   - name: "Warehouse"
-    url: "rtsp://admin:password@192.168.1.103:554/stream1"  # <-- UPDATE
-    enabled: true
+    url: "rtsp://admi:mngr1234@192.168.100.65:554/Streaming/Channels/401"
+    enabled: false  # Enable when ready
     fps_process: 1
     zone: "Warehouse"
     required_ppe: ["helmet", "vest"]
 
   - name: "Loading-Dock"
-    url: "rtsp://admin:password@192.168.1.104:554/stream1"  # <-- UPDATE
-    enabled: false  # Set true when ready
+    url: "rtsp://admi:mngr1234@192.168.100.65:554/Streaming/Channels/501"
+    enabled: false  # Enable when ready
     fps_process: 2
     zone: "Loading Dock"
     required_ppe: ["helmet", "vest", "safety_shoes"]

@@ -665,7 +665,8 @@ def render_sidebar() -> dict:
         if source_type == "RTSP Stream":
             cam_url = st.text_input(
                 "RTSP URL",
-                placeholder="rtsp://user:pass@192.168.1.x:554/stream1"
+                value="rtsp://admi:mngr1234@192.168.100.65:554/Streaming/Channels/201",
+                placeholder="rtsp://user:pass@192.168.1.x:554/Streaming/Channels/101"
             )
         elif source_type == "Webcam":
             cam_idx = st.number_input(
