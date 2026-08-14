@@ -505,8 +505,16 @@ class LiveMonitor:
             src = self.source               # RTSP URL or file path
 
         if isinstance(src, str) and "rtsp" in src.lower():
+            # Try 1: FFmpeg with TCP
             os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;tcp"
             cap = cv2.VideoCapture(src, cv2.CAP_FFMPEG)
+            if not cap.isOpened():
+                # Try 2: FFmpeg with UDP
+                os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp"
+                cap = cv2.VideoCapture(src, cv2.CAP_FFMPEG)
+            if not cap.isOpened():
+                # Try 3: Auto Backend
+                cap = cv2.VideoCapture(src)
         else:
             cap = cv2.VideoCapture(src)
         if isinstance(src, str) and "rtsp" in src.lower():
